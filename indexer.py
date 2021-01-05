@@ -5,10 +5,10 @@ class Indexer:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def __init__(self, config):
-        self.inverted_idx = {}
-        self.postingDict = {}
+        self.inverted_idx = {}  # { term: [[tweet_id], df, cf, bucket_id, idf]}
+        self.postingDict = {}  # {(term, tweet_id): [normalized tf, tf-idf]}
         self.config = config
-        self.document_dict = {}
+        self.document_dict = {}  # {tweet_id : [doc len, max tf, unique words, |d|]}
         self.upper_terms = set()
         self.suspected_entities = {}  # ENTITY: (TWEETID,tf)
 
@@ -35,7 +35,7 @@ class Indexer:
                 prev_tf = self.suspected_entities[entity][1]
                 prev_max_tf = self.document_dict[prev_tweet_id][1]
                 self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, 0, None] #TODO deal with 0 it was bucketID
-                self.postingDict.update({(entity, prev_tweet_id): [None, prev_tf / prev_max_tf, 0]})
+                self.postingDict.update({(entity, prev_tweet_id): [prev_tf / prev_max_tf, 0]})
                 # Add to document term list to process, and remove from suspected
                 terms_in_document[entity] = document.entities[entity]
                 self.suspected_entities.pop(entity)
@@ -79,7 +79,7 @@ class Indexer:
 
                 # Add to posting file
                 self.postingDict.update(
-                    {(term, tweet_id): [terms_in_document[old_term], tf / document.max_tf, 0]})  # TODO: remove indices
+                    {(term, tweet_id): [tf / document.max_tf, 0]})  # TODO: remove indices
 
             except:
                 print('problem with the following key {}'.format(term))
@@ -124,9 +124,9 @@ class Indexer:
             if idf is None:
                 idf = (log10(N / self.inverted_idx[term][1])).real
                 self.inverted_idx[term][4] = idf
-            tf_ij = self.postingDict[key][1]
+            tf_ij = self.postingDict[key][0]
             w_ij = tf_ij * idf
-            self.postingDict[key][2] = w_ij
+            self.postingDict[key][1] = w_ij
             self.document_dict[tweet_id][3] += w_ij ** 2
 
         #save_obj(self.postingDict, file_path) # TODO: Where we save posting dict

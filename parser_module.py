@@ -261,7 +261,7 @@ contractions = {
 
 class Parse:
 
-    def __init__(self,stemming=False):
+    def __init__(self,stemming=True):
         self.stop_words = stopwords.words('english')
         self.stop_words+= ["rt", "http", "https", "www","twitter.com"] # TODO: check &amp
         self.terms = set()

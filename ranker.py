@@ -33,7 +33,7 @@ class Ranker:
             query_weight += w_iq ** 2
             query_vector[j, 0] = w_iq
             for tweet_id in docs:
-                w_ij = posting_files[(term, tweet_id)][2]
+                w_ij = posting_files[(term, tweet_id)][1]
                 i = doc_map[tweet_id]
                 matrix[i, j] = w_ij
 
