@@ -93,3 +93,24 @@ class Ranker:
         ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking)]
         sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets]
+
+
+    @staticmethod
+    def rank_relevant_docs_by_w2v(relevant_docs, k=None):
+        """
+        This function provides rank for each relevant document and sorts them by their scores.
+        The current score considers solely the number of terms shared by the tweet (full_text) and query.
+        :param k: number of most relevant docs to return, default to everything.
+        :param relevant_docs: dictionary of documents that contains at least one term from the query.
+        :return: sorted list of documents by score
+        """
+        w2v = Word2Vec()
+        posting_files, doc_set, query_terms, term_dict = relevant_docs
+        query_vector = w2v.get_vector(query_terms)
+        normed_query_vector = np.linalg.norm(query_vector)
+        ranks = []
+        for doc in doc_set:
+            vector = w2v.get_vector(doc_set[doc][0])
+            if vector == []: continue
+            cosine_w2v = np.dot(vector,query_vector) / np.linalg.norm(vector) * normed_query_vector
+            ranks.append((doc,cosine_w2v))
