@@ -34,7 +34,7 @@ class Indexer:
                 prev_tweet_id = self.suspected_entities[entity][0]
                 prev_tf = self.suspected_entities[entity][1]
                 prev_max_tf = self.document_dict[prev_tweet_id][1]
-                self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, 0, None] #TODO deal with 0 it was bucketID
+                self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, None] 
                 self.postingDict.update({(entity, prev_tweet_id): [prev_tf / prev_max_tf, 0]})
                 # Add to document term list to process, and remove from suspected
                 terms_in_document[entity] = document.entities[entity]
@@ -57,7 +57,7 @@ class Indexer:
                     # We want to make sure lower term and upper term are in the same bucket
                     if term.upper() in self.inverted_idx:  # we have lower and upper is inside - this is a new term
                         self.upper_terms.add(term.upper()) # add to fix list
-                        self.inverted_idx[term] = [[tweet_id], 1, tf, 0, None]
+                        self.inverted_idx[term] = [[tweet_id], 1, tf, None]
                     elif term.lower() in self.inverted_idx:  # we have upper and lower is inside - add to existing lower
                         term = term.lower()
                         term_rec = self.inverted_idx[term]
@@ -66,7 +66,7 @@ class Indexer:
                         term_rec[2] += tf  # cf
                         self.inverted_idx[term] = term_rec
                     else:  # new word - new term
-                        self.inverted_idx[term] = [[tweet_id], 1, tf, 0, None]
+                        self.inverted_idx[term] = [[tweet_id], 1, tf, None]
 
                 else:  # existing term - update term parameters
                     if term.lower() in self.inverted_idx:
@@ -120,10 +120,10 @@ class Indexer:
         # Calculate document |d| by wij in each posting for ranking
         for key in self.postingDict:
             term, tweet_id = key
-            idf = self.inverted_idx[term][4]
+            idf = self.inverted_idx[term][3]
             if idf is None:
                 idf = (log10(N / self.inverted_idx[term][1])).real
-                self.inverted_idx[term][4] = idf
+                self.inverted_idx[term][3] = idf
             tf_ij = self.postingDict[key][0]
             w_ij = tf_ij * idf
             self.postingDict[key][1] = w_ij
