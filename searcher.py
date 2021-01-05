@@ -54,7 +54,7 @@ class Searcher:
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
-        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
+        ranked_doc_ids = Ranker.rank_relevant_docs_1(relevant_docs)
         # Expand query
         doc_dict = self._indexer.get_doc_list(ranked_doc_ids[:NUM_OF_DOCS])
         new_query = LocalMethod.expand_query(query, doc_dict)
