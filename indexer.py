@@ -5,12 +5,12 @@ class Indexer:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def __init__(self, config):
-        self.inverted_idx = {}  # { term: [[tweet_id], df, cf, bucket_id, idf]}
+        self.inverted_idx = {}  # { term: [[tweet_id], df, cf, idf]}
         self.postingDict = {}  # {(term, tweet_id): [normalized tf, tf-idf]}
         self.config = config
-        self.document_dict = {}  # {tweet_id : [doc len, max tf, unique words, |d|]}
+        self.document_dict = {}  # {tweet_id : [set(words), |d|]}
         self.upper_terms = set()
-        self.suspected_entities = {}  # ENTITY: (TWEETID,tf)
+        self.suspected_entities = {}  # ENTITY: (TWEETID, tf, max tf)
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -21,8 +21,8 @@ class Indexer:
         :param document: a document need to be indexed.
         :return: -
         """
-        self.document_dict[document.tweet_id] = [document.doc_length, document.max_tf, document.unique_words_count, 0]
         terms_in_document = document.term_doc_dictionary
+        self.document_dict[document.tweet_id] = [set(terms_in_document.keys()), 0]
         tweet_id = document.tweet_id
 
         # Handle entities - verify only entities appear in 2+ tweets will be in our corpus
@@ -33,14 +33,14 @@ class Indexer:
                 # Add entity as term
                 prev_tweet_id = self.suspected_entities[entity][0]
                 prev_tf = self.suspected_entities[entity][1]
-                prev_max_tf = self.document_dict[prev_tweet_id][1]
-                self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, None] 
+                prev_max_tf = self.suspected_entities[entity][2]
+                self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, None]
                 self.postingDict.update({(entity, prev_tweet_id): [prev_tf / prev_max_tf, 0]})
                 # Add to document term list to process, and remove from suspected
                 terms_in_document[entity] = document.entities[entity]
                 self.suspected_entities.pop(entity)
             else:  # new entity
-                self.suspected_entities[entity] = (tweet_id, document.entities[entity])
+                self.suspected_entities[entity] = (tweet_id, document.entities[entity], document.max_tf)
 
         # Go over each term in the doc - add to posting file and update term dictionary
         for term in terms_in_document.keys():
@@ -127,7 +127,7 @@ class Indexer:
             tf_ij = self.postingDict[key][0]
             w_ij = tf_ij * idf
             self.postingDict[key][1] = w_ij
-            self.document_dict[tweet_id][3] += w_ij ** 2
+            self.document_dict[tweet_id][1] += w_ij ** 2
 
         #save_obj(self.postingDict, file_path) # TODO: Where we save posting dict
 
@@ -180,7 +180,7 @@ class Indexer:
         doc_dict = {}
         tweet_ids = self.inverted_idx[term][0]
         for tweet in tweet_ids:
-            doc_dict[tweet] = self.document_dict[tweet][3]
+            doc_dict[tweet] = self.document_dict[tweet][1]
         return doc_dict
 
     def get_term_records(self,term):

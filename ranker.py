@@ -29,7 +29,7 @@ class Ranker:
         for term in query_terms:
             docs = term_dict[term][0]
             j = term_map[term]
-            w_iq = term_dict[term][4] * query_terms[term]
+            w_iq = term_dict[term][3] * query_terms[term]
             query_weight += w_iq ** 2
             query_vector[j, 0] = w_iq
             for tweet_id in docs:
