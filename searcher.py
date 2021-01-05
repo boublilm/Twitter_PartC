@@ -44,7 +44,7 @@ class Searcher:
         :param query_as_list: parsed query tokens
         :return: dictionary of relevant documents mapping doc_id to document frequency.
         """
-        query_terms = {term: len(parsed_query[term]) for term in parsed_query}  # query terms is {term:tf}
+        query_terms = {term: parsed_query[term] for term in parsed_query}  # query terms is {term:tf}
 
         # Preparing query terms as appear in dictionary
         terms = list(query_terms)

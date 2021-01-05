@@ -380,13 +380,12 @@ class Parse:
             d[term_lower] = upper_list
         self.terms.add(term)
 
-        # Creating indices list
+        # Updating tf for term
         self.nonstopwords += 1
-        tmp_lst = d.get(term, [])
-        tmp_lst.append(counter)
-        d[term] = tmp_lst
-        if self.max_tf < len(tmp_lst):
-            self.max_tf = len(tmp_lst)
+        tf = d.get(term, 0) + 1
+        d[term] = tf
+        if self.max_tf < tf:
+            self.max_tf = tf
 
     def parse_doc(self, doc_as_list):  # Do NOT change signature
         """doc_as_list[3]

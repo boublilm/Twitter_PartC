@@ -22,7 +22,7 @@ class Indexer:
         :return: -
         """
         terms_in_document = document.term_doc_dictionary
-        self.document_dict[document.tweet_id] = [set(terms_in_document.keys()), 0]
+        self.document_dict[document.tweet_id] = [terms_in_document, 0]
         tweet_id = document.tweet_id
 
         # Handle entities - verify only entities appear in 2+ tweets will be in our corpus
@@ -44,11 +44,7 @@ class Indexer:
 
         # Go over each term in the doc - add to posting file and update term dictionary
         for term in terms_in_document.keys():
-            term_record = terms_in_document[term]
-            if type(term_record) == int:  # entity
-                tf = term_record
-            else:  # regular term
-                tf = len(terms_in_document[term])
+            tf = terms_in_document[term]
 
             old_term = term
             try:

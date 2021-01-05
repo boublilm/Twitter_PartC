@@ -17,6 +17,7 @@ class Document:
         self.tweet_id = tweet_id
         self.full_text = full_text
         self.term_doc_dictionary = term_doc_dictionary
+
         self.doc_length = doc_length
         self.unique_words_count = len(term_doc_dictionary)
         self.max_tf = max_tf
