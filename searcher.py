@@ -1,6 +1,7 @@
 from ranker import Ranker
 import utils
 from WordNet import WordNet
+from LocalMethod import LocalMethod
 
 # DO NOT MODIFY CLASS NAME
 class Searcher:
@@ -31,6 +32,34 @@ class Searcher:
         """
         query = WordNet.expand_query(self._parser.remove_stopwords(query))
         parsed_query, parsed_entities = self._parser.parse_query(query)
+        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        n_relevant = len(relevant_docs[1])
+        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
+        return n_relevant, ranked_doc_ids
+
+    def search_local(self, query, k=None):
+        """
+        Executes a query over an existing index and returns the number of
+        relevant docs and an ordered list of search results (tweet ids).
+        Input:
+            query - string.
+            k - number of top results to return, default to everything.
+        Output:
+            A tuple containing the number of relevant search results, and
+            a list of tweet_ids where the first element is the most relavant
+            and the last is the least relevant result.
+        """
+        NUM_OF_DOCS = 200
+        # Get all relevant docs
+        query = self._parser.remove_stopwords(query)
+        parsed_query, parsed_entities = self._parser.parse_query(query)
+        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
+        # Expand query
+        doc_dict = self._indexer.get_doc_list(ranked_doc_ids[:NUM_OF_DOCS])
+        new_query = LocalMethod.expand_query(query, doc_dict)
+        parsed_query, parsed_entities = self._parser.parse_query(new_query)
+        # Run new query
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(relevant_docs[1])
         ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)

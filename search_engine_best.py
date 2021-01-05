@@ -76,4 +76,6 @@ class SearchEngine:
             and the last is the least relevant result.
         """
         searcher = Searcher(self._parser, self._indexer, model=self._model)
-        return searcher.search(query)
+        #to_return = searcher.search(query)
+        to_return = searcher.search_local(query)
+        return to_return

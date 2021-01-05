@@ -171,12 +171,22 @@ class Indexer:
 
     def get_term_tweets_list(self, term):
         """
-        Return the posting list from the index for a term.
+        Return the document list from the index for a term.
+        {tweet_id: |d|}
         """
         doc_dict = {}
         tweet_ids = self.inverted_idx[term][0]
         for tweet in tweet_ids:
             doc_dict[tweet] = self.document_dict[tweet][1]
+        return doc_dict
+
+    def get_doc_list(self, docs):
+        """
+        Return the document dict {tweet_id: {term:tf}}
+        """
+        doc_dict = {}
+        for tweet_id in docs:
+            doc_dict[tweet_id] = self.document_dict[tweet_id][0]
         return doc_dict
 
     def get_term_records(self,term):
