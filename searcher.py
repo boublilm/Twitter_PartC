@@ -50,6 +50,7 @@ class Searcher:
             and the last is the least relevant result.
         """
         NUM_OF_DOCS = 200
+        k=700
         # Get all relevant docs
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
@@ -62,7 +63,7 @@ class Searcher:
         # Run new query
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
+        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs,k)
         return n_relevant, ranked_doc_ids
 
     # feel free to change the signature and/or implementation of this function 

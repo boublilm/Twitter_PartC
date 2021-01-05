@@ -47,7 +47,7 @@ class Ranker:
 
         ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking)]
         sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
-        return [x[0] for x in sorted_tweets]
+        return [x[0] for x in sorted_tweets][:k]
 
     @staticmethod
     def rank_relevant_docs_1(relevant_docs, k=None):

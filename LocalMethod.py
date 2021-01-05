@@ -1,6 +1,6 @@
 import numpy as np
 
-MIN_SIMILARITY = 0.5
+MIN_SIMILARITY = 0.2
 
 class LocalMethod:
 

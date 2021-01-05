@@ -264,6 +264,7 @@ class Parse:
     def __init__(self,stemming=True):
         self.stop_words = stopwords.words('english')
         self.stop_words+= ["rt", "http", "https", "www","twitter.com"] # TODO: check &amp
+        self.corona_words = ["corona", "covid", "covid-19", "coronavirus", "covd", "covid_19"]
         self.terms = set()
         self.nonstopwords = 0
         self.max_tf = 0
@@ -290,13 +291,17 @@ class Parse:
         for term in text_tokens:
             if len(term) < 1: continue
             indices_counter += 1
+            if term.lower() in self.corona_words:
+                term = "covid"
             if term[0] == "#":  # handle hashtags
+                continue
                 hashtag_list = self.hashtag_parser(term)
                 for mini_term in hashtag_list:
                     self.dictAppender(term_dict, indices_counter, mini_term)
             elif term[0] == "@":  # handle tags
-                no_tag = self.tags_parser(term)
-                self.dictAppender(term_dict, indices_counter, no_tag)
+                continue
+                #no_tag = self.tags_parser(term)
+                #self.dictAppender(term_dict, indices_counter, no_tag)
             elif term in contractions:  # remove things like he'll
                 new_terms = contractions[term].split(" ")
                 for mini_term in new_terms:
@@ -349,7 +354,7 @@ class Parse:
         if len(splitted_hashtag) < 2:
             return splitted_hashtag
         else:
-            return splitted_hashtag[1:] + [hashtag.lower()]
+            return splitted_hashtag[1:] #+ [hashtag.lower()]
 
     def tags_parser(self, tag):
         return tag[1:]
@@ -434,5 +439,11 @@ class Parse:
     def remove_stopwords(self,query):
         text_tokens = re.findall(TOKENIZER_PATTERN, query)
         tokens = list(filter(lambda x: x.lower() not in self.stop_words, text_tokens))
+        real_ones = list()
+        for term in tokens:
+            if term.lower() in self.corona_words:
+                real_ones.append("covid")
+            else:
+                real_ones.append(term)
         query = ' '.join(tokens)
         return query
