@@ -3,7 +3,6 @@ import numpy as np
 # break the searcher module
 from Word2Vec import Word2Vec
 
-
 class Ranker:
     def __init__(self, w2v=None):
         self.w2v = w2v
