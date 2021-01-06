@@ -65,7 +65,7 @@ class SearchEngine:
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
-    def search(self, query,a,b):
+    def search(self, query):
         """ 
         Executes a query over an existing index and returns the number of 
         relevant docs and an ordered list of search results.

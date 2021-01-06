@@ -18,6 +18,7 @@ class SearchEngine:
         self._indexer = Indexer(config)
         self._model = None
         self.searcher = Searcher(self._parser, self._indexer, model=self._model)
+        self.searcher.load_w2v()
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.

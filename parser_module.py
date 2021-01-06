@@ -257,7 +257,6 @@ contractions = {
 "you’ve": "you have"
 }
 
-# TODO: if we want in helek gimel - HOK 3 - U.S.A to USA
 
 class Parse:
 
@@ -294,7 +293,6 @@ class Parse:
             if term.lower() in self.corona_words:
                 term = "covid"
             if term[0] == "#":  # handle hashtags
-                continue
                 hashtag_list = self.hashtag_parser(term)
                 for mini_term in hashtag_list:
                     self.dictAppender(term_dict, indices_counter, mini_term)
@@ -445,5 +443,5 @@ class Parse:
                 real_ones.append("covid")
             else:
                 real_ones.append(term)
-        query = ' '.join(tokens)
+        query = ' '.join(real_ones)
         return query

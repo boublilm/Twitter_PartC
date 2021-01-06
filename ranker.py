@@ -2,12 +2,11 @@ import numpy as np
 # you can change whatever you want in this module, just make sure it doesn't
 # break the searcher module
 from Word2Vec import Word2Vec
-from sklearn.metrics.pairwise import cosine_similarity
 
 
 class Ranker:
-    def __init__(self):
-        self.w2v = Word2Vec()
+    def __init__(self, w2v=None):
+        self.w2v = w2v
 
     def rank_relevant_docs(self,relevant_docs, k=None):
         """
@@ -48,7 +47,7 @@ class Ranker:
             size_vector[indx, 0] = (doc_set[tweet_id] ** 0.5) * query_weight
         ranking = np.transpose(np.divide(document_vector, size_vector)).tolist()[0]
 
-        ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking)]
+        ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking) if y > 0.1]
         sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets][:k]
 
@@ -96,9 +95,6 @@ class Ranker:
         sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets]
 
-    def get_cosine_similarity(self,feature_vec_1, feature_vec_2):
-        return cosine_similarity(feature_vec_1.reshape(1, -1), feature_vec_2.reshape(1, -1))[0][0]
-
     def rank_relevant_docs_by_w2v(self,relevant_docs, k=None):
         """
         This function provides rank for each relevant document and sorts them by their scores.
@@ -118,4 +114,4 @@ class Ranker:
             cosine_w2v = np.dot(vector,query_vector) / np.linalg.norm(vector) * normed_query_vector
             ranks.append((doc,cosine_w2v))
         sorted_tweets = sorted(ranks, key=lambda x: x[1], reverse=True)
-        return [x[0] for x in sorted_tweets][:800]
+        return [x[0] for x in sorted_tweets]

@@ -1,4 +1,5 @@
 import configuration
+from Word2Vec import Word2Vec
 from ranker import Ranker
 import utils
 from WordNet import WordNet
@@ -16,6 +17,11 @@ class Searcher:
         self._indexer = indexer
         self._ranker = Ranker()
         self._model = model
+        self.w2v = None
+
+    def load_w2v(self):
+        self.w2v = Word2Vec()
+        self._ranker = Ranker(self.w2v)
 
     def search_reg(self, query, k=None):
         """

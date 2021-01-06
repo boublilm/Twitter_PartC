@@ -257,7 +257,6 @@ contractions = {
 "you’ve": "you have"
 }
 
-# TODO: if we want in helek gimel - HOK 3 - U.S.A to USA
 
 class Parse:
 
