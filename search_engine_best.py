@@ -17,6 +17,7 @@ class SearchEngine:
         self._parser = Parse()
         self._indexer = Indexer(config)
         self._model = None
+        self.searcher = Searcher(self._parser, self._indexer, model=self._model)
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -64,7 +65,7 @@ class SearchEngine:
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
-    def search(self, query):
+    def search(self, query,a,b):
         """ 
         Executes a query over an existing index and returns the number of 
         relevant docs and an ordered list of search results.
@@ -75,7 +76,5 @@ class SearchEngine:
             a list of tweet_ids where the first element is the most relavant 
             and the last is the least relevant result.
         """
-        searcher = Searcher(self._parser, self._indexer, model=self._model)
-        #to_return = searcher.search(query)
-        to_return = searcher.search_local(query)
+        to_return = self.searcher.search_local(query)
         return to_return

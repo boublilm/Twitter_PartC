@@ -1,3 +1,4 @@
+import configuration
 from ranker import Ranker
 import utils
 from WordNet import WordNet
@@ -15,6 +16,25 @@ class Searcher:
         self._indexer = indexer
         self._ranker = Ranker()
         self._model = model
+
+    def search_reg(self, query, k=None):
+        """
+        Executes a query over an existing index and returns the number of
+        relevant docs and an ordered list of search results (tweet ids).
+        Input:
+            query - string.
+            k - number of top results to return, default to everything.
+        Output:
+            A tuple containing the number of relevant search results, and
+            a list of tweet_ids where the first element is the most relavant
+            and the last is the least relevant result.
+        """
+        query = self._parser.remove_stopwords(query)
+        parsed_query, parsed_entities = self._parser.parse_query(query)
+        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        n_relevant = len(relevant_docs[1])
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs)
+        return n_relevant, ranked_doc_ids
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -34,7 +54,7 @@ class Searcher:
         parsed_query, parsed_entities = self._parser.parse_query(query)
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs)
         return n_relevant, ranked_doc_ids
 
     def search_w2v(self, query, k=None):
@@ -54,7 +74,7 @@ class Searcher:
         posting_files, doc_set, query_terms, term_dict = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(doc_set)
         doc_set = self._indexer.get_doc_list(doc_set)
-        ranked_doc_ids = Ranker.rank_relevant_docs_by_w2v((posting_files, doc_set, query_terms, term_dict))
+        ranked_doc_ids = self._ranker.rank_relevant_docs_by_w2v((posting_files, doc_set, query_terms, term_dict))
         return n_relevant, ranked_doc_ids
 
     def search_local(self, query, k=None):
@@ -70,12 +90,12 @@ class Searcher:
             and the last is the least relevant result.
         """
         NUM_OF_DOCS = 200
-        k=700
+        k = 800
         # Get all relevant docs
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
-        ranked_doc_ids = Ranker.rank_relevant_docs_1(relevant_docs)
+        ranked_doc_ids = self._ranker.rank_relevant_docs_1(relevant_docs)
         # Expand query
         doc_dict = self._indexer.get_doc_list(ranked_doc_ids[:NUM_OF_DOCS])
         new_query = LocalMethod.expand_query(query, doc_dict)
@@ -83,7 +103,7 @@ class Searcher:
         # Run new query
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs,k)
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs,k)
         return n_relevant, ranked_doc_ids
 
     # feel free to change the signature and/or implementation of this function 

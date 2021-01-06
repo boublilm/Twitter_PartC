@@ -17,6 +17,7 @@ class ConfigClass:
         self.toStem = False
         self.google_news_vectors_negative300_path = '../../../../GoogleNews-vectors-negative300.bin'
         self.glove_twitter_27B_25d_path = '../../../../glove.twitter.27B.25d.txt'
+        self.numofdocs = 200
 
         print('Project was created successfully..')
 
