@@ -1,7 +1,7 @@
 import pandas as pd
 from reader import ReadFile
 from configuration import ConfigClass
-from parser_module import Parse
+from spell_check_parser_module import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
@@ -76,5 +76,5 @@ class SearchEngine:
             a list of tweet_ids where the first element is the most relavant 
             and the last is the least relevant result.
         """
-        to_return = self.searcher.search_local(query)
+        to_return = self.searcher.search_best(query)
         return to_return

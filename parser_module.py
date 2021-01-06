@@ -442,6 +442,6 @@ class Parse:
             if term.lower() in self.corona_words:
                 real_ones.append("covid")
             else:
-                real_ones.append(term)
+                real_ones.append(self.stemmer.stem_term(term))
         query = ' '.join(real_ones)
         return query

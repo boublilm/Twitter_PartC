@@ -25,6 +25,7 @@ class Ranker:
         matrix = np.zeros((number_of_docs, query_len))
         query_vector = np.zeros((query_len, 1))
         query_weight = 0
+        doc_len = {}
 
         # Inset values to matrix and calculating query_weight (scalar) and query_vector
         for term in query_terms:
@@ -34,6 +35,7 @@ class Ranker:
             query_weight += w_iq ** 2
             query_vector[j, 0] = w_iq
             for tweet_id in docs:
+                doc_len[tweet_id] = doc_len.get(tweet_id,0) +1
                 w_ij = posting_files[(term, tweet_id)][1]
                 i = doc_map[tweet_id]
                 matrix[i, j] = w_ij
@@ -45,9 +47,14 @@ class Ranker:
         for tweet_id, indx in doc_map.items():
             size_vector[indx, 0] = (doc_set[tweet_id] ** 0.5) * query_weight
         ranking = np.transpose(np.divide(document_vector, size_vector)).tolist()[0]
-
-        ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking) if y > 0.1]
-        sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
+        sorted_ranking = sorted(ranking,reverse=True)
+        avg = sum(sorted_ranking[:300])/300
+        ranked_tweets = [(tweet, rank) for tweet,rank in zip(doc_map, ranking) if rank > 0.2]
+        print(len(ranked_tweets))
+        if k is not None:
+            sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)[:k]
+        else:
+            sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets][:k]
 
     def rank_relevant_docs_1(self,relevant_docs, k=None):
@@ -91,7 +98,10 @@ class Ranker:
         ranking = np.transpose(np.divide(document_vector, size_vector)).tolist()[0]
 
         ranked_tweets = [(x, y) for x, y in zip(doc_map, ranking)]
-        sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
+        if k is not None:
+            sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)[:k]
+        else:
+            sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets]
 
     def rank_relevant_docs_by_w2v(self,relevant_docs, k=None):
@@ -109,8 +119,10 @@ class Ranker:
         for doc in doc_set:
             vector = self.w2v.get_vector(doc_set[doc])
             if vector == []: continue
-            #cosine_w2v = get_cosine_similarity(query_vector,vector)
-            cosine_w2v = np.dot(vector,query_vector) / np.linalg.norm(vector) * normed_query_vector
+            cosine_w2v = np.dot(vector,query_vector) / (np.linalg.norm(vector) * normed_query_vector)
             ranks.append((doc,cosine_w2v))
-        sorted_tweets = sorted(ranks, key=lambda x: x[1], reverse=True)
+        if k is not None:
+            sorted_tweets = sorted(ranks, key=lambda x: x[1], reverse=True)[:k]
+        else:
+            sorted_tweets = sorted(ranks, key=lambda x: x[1], reverse=True)
         return [x[0] for x in sorted_tweets]

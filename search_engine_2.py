@@ -76,5 +76,5 @@ class SearchEngine:
             a list of tweet_ids where the first element is the most relavant
             and the last is the least relevant result.
         """
-        to_return = self.searcher.search_local(query)
+        to_return = self.searcher.search_local(query, 200)
         return to_return

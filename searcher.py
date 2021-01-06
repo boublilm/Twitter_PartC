@@ -21,7 +21,7 @@ class Searcher:
         self.w2v = None
 
     def load_w2v(self):
-        self.w2v = Word2Vec()
+        self.w2v = Word2Vec(self._model)
         self._ranker = Ranker(self.w2v)
 
     def search_reg(self, query, k=None):
@@ -38,9 +38,9 @@ class Searcher:
         """
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
-        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
-        n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs)
+        posting_files, doc_set, query_terms, term_dict = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        n_relevant = len(doc_set)
+        ranked_doc_ids = self._ranker.rank_relevant_docs((posting_files, doc_set, query_terms, term_dict), k)
         return n_relevant, ranked_doc_ids
 
     # DO NOT MODIFY THIS SIGNATURE
@@ -61,7 +61,7 @@ class Searcher:
         parsed_query, parsed_entities = self._parser.parse_query(query)
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs)
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs, k)
         return n_relevant, ranked_doc_ids
 
     def search_w2v(self, query, k=None):
@@ -76,12 +76,13 @@ class Searcher:
             a list of tweet_ids where the first element is the most relavant
             and the last is the least relevant result.
         """
+        self.load_w2v()
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
         posting_files, doc_set, query_terms, term_dict = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         n_relevant = len(doc_set)
         doc_set = self._indexer.get_doc_list(doc_set)
-        ranked_doc_ids = self._ranker.rank_relevant_docs_by_w2v((posting_files, doc_set, query_terms, term_dict))
+        ranked_doc_ids = self._ranker.rank_relevant_docs_by_w2v((posting_files, doc_set, query_terms, term_dict), k)
         return n_relevant, ranked_doc_ids
 
     def search_local(self, query, k=None):
@@ -97,7 +98,6 @@ class Searcher:
             and the last is the least relevant result.
         """
         NUM_OF_DOCS = 200
-        k = 800
         # Get all relevant docs
         query = self._parser.remove_stopwords(query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
@@ -109,8 +109,25 @@ class Searcher:
         parsed_query, parsed_entities = self._parser.parse_query(new_query)
         # Run new query
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
-        n_relevant = len(relevant_docs[1])
-        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs,k)
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs, k)
+        n_relevant = len(ranked_doc_ids)
+        return n_relevant, ranked_doc_ids
+
+    def search_best(self, query, k=None):
+        NUM_OF_DOCS = 200
+        # Get all relevant docs
+        query = WordNet.expand_query(self._parser.remove_stopwords(query))
+        parsed_query, parsed_entities = self._parser.parse_query(query)
+        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        ranked_doc_ids = self._ranker.rank_relevant_docs_1(relevant_docs)
+        # Expand query
+        doc_dict = self._indexer.get_doc_list(ranked_doc_ids[:NUM_OF_DOCS])
+        new_query = LocalMethod.expand_query(query, doc_dict)
+        parsed_query, parsed_entities = self._parser.parse_query(new_query)
+        # Run new query
+        relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
+        ranked_doc_ids = self._ranker.rank_relevant_docs(relevant_docs, k)
+        n_relevant = len(ranked_doc_ids)
         return n_relevant, ranked_doc_ids
 
     # feel free to change the signature and/or implementation of this function 

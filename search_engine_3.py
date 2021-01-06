@@ -4,6 +4,7 @@ from configuration import ConfigClass
 from parser_module import Parse
 from indexer import Indexer
 from searcher import Searcher
+from gensim.models import KeyedVectors
 import utils
 
 #Word2Vec
@@ -17,8 +18,7 @@ class SearchEngine:
         self._parser = Parse()
         self._indexer = Indexer(config)
         self._model = None
-        self.searcher = Searcher(self._parser, self._indexer, model=self._model)
-        self.searcher.load_w2v()
+        self.searcher = None
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -62,7 +62,7 @@ class SearchEngine:
         This is where you would load models like word2vec, LSI, LDA, etc. and
         assign to self._model, which is passed on to the searcher at query time.
         """
-        pass
+        self._model = KeyedVectors.load_word2vec_format(r'model\model', binary=True, unicode_errors='ignore')
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -77,5 +77,6 @@ class SearchEngine:
             a list of tweet_ids where the first element is the most relavant
             and the last is the least relevant result.
         """
-        to_return = self.searcher.search_w2v(query)
+        self.searcher = Searcher(self._parser, self._indexer, model=self._model)
+        to_return = self.searcher.search_w2v(query, 200)
         return to_return

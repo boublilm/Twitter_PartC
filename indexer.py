@@ -182,7 +182,7 @@ class Indexer:
 
     def get_doc_list(self, docs):
         """
-        Return the document dict {tweet_id: {term:tf}}
+        Return the document dict {tweet_id: {term:(set-words)}}
         """
         doc_dict = {}
         for tweet_id in docs:
