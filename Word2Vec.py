@@ -1,11 +1,9 @@
 from gensim.models import KeyedVectors
 import numpy as np
 
-MODEL_PATH = r"C:\Users\maorb\model"
-
 class Word2Vec:
-    def _init_(self):
-        self.wv = KeyedVectors.load(MODEL_PATH, mmap='r')
+    def __init__(self):
+        self.wv = KeyedVectors.load(r"C:\Users\maorb\model", mmap='r')
 
     def expand_query(self,query):
         query_list = [term for term in query.split(" ")]

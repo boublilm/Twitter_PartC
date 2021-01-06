@@ -1,6 +1,9 @@
 import numpy as np
 # you can change whatever you want in this module, just make sure it doesn't
 # break the searcher module
+from Word2Vec import Word2Vec
+
+
 class Ranker:
     def __init__(self):
         pass
@@ -110,7 +113,7 @@ class Ranker:
         normed_query_vector = np.linalg.norm(query_vector)
         ranks = []
         for doc in doc_set:
-            vector = w2v.get_vector(doc_set[doc][0])
+            vector = w2v.get_vector(doc_set[doc])
             if vector == []: continue
             cosine_w2v = np.dot(vector,query_vector) / np.linalg.norm(vector) * normed_query_vector
             ranks.append((doc,cosine_w2v))

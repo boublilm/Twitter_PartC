@@ -2,9 +2,10 @@ import search_engine_best
 import time
 import pandas as pd
 import numpy as np
+import search_engine_3
 
 if __name__ == '__main__':
-    se = search_engine_best.SearchEngine()
+    se = search_engine_3.SearchEngine()
     se.build_index_from_parquet(r"C:\Users\maorb\OneDrive\Desktop\Search_Engine_Part_C\Search_Engine-master\data\benchmark_data_train.snappy.parquet")
     df = pd.read_csv(r"C:\Users\maorb\OneDrive\Desktop\Search_Engine_Part_C\Search_Engine-master\data\queries_train.tsv", sep='\t')
     times = []
