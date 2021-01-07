@@ -48,9 +48,9 @@ class Ranker:
             size_vector[indx, 0] = (doc_set[tweet_id] ** 0.5) * query_weight
         ranking = np.transpose(np.divide(document_vector, size_vector)).tolist()[0]
         sorted_ranking = sorted(ranking,reverse=True)
-        avg = sum(sorted_ranking[:300])/300
+        #avg = sum(sorted_ranking[:300])/300
         ranked_tweets = [(tweet, rank) for tweet,rank in zip(doc_map, ranking) if rank > 0.2]
-        print(len(ranked_tweets))
+        #print(len(ranked_tweets))
         if k is not None:
             sorted_tweets = sorted(ranked_tweets, key=lambda x: x[1], reverse=True)[:k]
         else:
@@ -120,7 +120,7 @@ class Ranker:
             vector = self.w2v.get_vector(doc_set[doc])
             if vector == []: continue
             cosine_w2v = np.dot(vector,query_vector) / (np.linalg.norm(vector) * normed_query_vector)
-            ranks.append((doc,cosine_w2v))
+            ranks.append((doc, cosine_w2v))
         if k is not None:
             sorted_tweets = sorted(ranks, key=lambda x: x[1], reverse=True)[:k]
         else:

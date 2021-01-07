@@ -262,7 +262,7 @@ class Parse:
 
     def __init__(self,stemming=True):
         self.stop_words = stopwords.words('english')
-        self.stop_words+= ["rt", "http", "https", "www","twitter.com"] # TODO: check &amp
+        self.stop_words+= ["rt", "http", "https", "www","twitter.com"]
         self.corona_words = ["corona", "covid", "covid-19", "coronavirus", "covd", "covid_19"]
         self.terms = set()
         self.nonstopwords = 0

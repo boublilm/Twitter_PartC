@@ -15,7 +15,7 @@ class Word2Vec:
             except:
                 continue
             for sim in similar:
-                if sim[1] > 0.3 and sim[0] not in q_added and sim[0] not in query_list:
+                if sim[1] > 0.6 and sim[0] not in q_added and sim[0] not in query_list:
                     q_added.append(sim[0])
                 else:
                     break

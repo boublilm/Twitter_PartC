@@ -75,7 +75,7 @@ class Indexer:
 
                 # Add to posting file
                 self.postingDict.update(
-                    {(term, tweet_id): [tf / document.max_tf, 0]})  # TODO: remove indices
+                    {(term, tweet_id): [tf / document.max_tf, 0]})
 
             except:
                 print('problem with the following key {}'.format(term))
@@ -125,7 +125,7 @@ class Indexer:
             self.postingDict[key][1] = w_ij
             self.document_dict[tweet_id][1] += w_ij ** 2
 
-        #save_obj(self.postingDict, file_path) # TODO: Where we save posting dict
+        #save_obj(self.postingDict, file_path)
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.

@@ -17,7 +17,7 @@ class SearchEngine:
         self._parser = Parse()
         self._indexer = Indexer(config)
         self._model = None
-        self.searcher = Searcher(self._parser, self._indexer, model=self._model)
+        self._searcher = Searcher(self._parser, self._indexer, model=self._model)
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -76,5 +76,5 @@ class SearchEngine:
             a list of tweet_ids where the first element is the most relavant 
             and the last is the least relevant result.
         """
-        to_return = self.searcher.search_best(query)
+        to_return = self._searcher.search_best(query)
         return to_return

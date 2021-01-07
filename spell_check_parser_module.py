@@ -263,7 +263,7 @@ class Parse:
 
     def __init__(self,stemming=True):
         self.stop_words = stopwords.words('english')
-        self.stop_words+= ["rt", "http", "https", "www","twitter.com"] # TODO: check &amp
+        self.stop_words+= ["rt", "http", "https", "www","twitter.com"]
         self.corona_words = ["corona", "covid", "covid-19", "coronavirus", "covd", "covid_19"]
         self.terms = set()
         self.nonstopwords = 0
@@ -300,8 +300,6 @@ class Parse:
                     self.dictAppender(term_dict, indices_counter, mini_term)
             elif term[0] == "@":  # handle tags
                 continue
-                #no_tag = self.tags_parser(term)
-                #self.dictAppender(term_dict, indices_counter, no_tag)
             elif term in contractions:  # remove things like he'll
                 new_terms = contractions[term].split(" ")
                 for mini_term in new_terms:
