@@ -283,7 +283,7 @@ class Parse:
         # Entity recognition by capital letters (2 words or more)
         for entity in re.findall(ENTITY_PATTERN, text):
             cleaned_entity = re.sub("-", " ", entity).upper()
-            entity_dict[cleaned_entity] = entity_dict.get(cleaned_entity,0) + 1
+            entity_dict[cleaned_entity.lower()] = entity_dict.get(cleaned_entity.lower(), 0) + 1
 
         text_tokens = re.findall(TOKENIZER_PATTERN, text)
         indices_counter = 0

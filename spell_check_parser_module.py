@@ -285,7 +285,7 @@ class Parse:
         # Entity recognition by capital letters (2 words or more)
         for entity in re.findall(ENTITY_PATTERN, text):
             cleaned_entity = re.sub("-", " ", entity).upper()
-            entity_dict[cleaned_entity] = entity_dict.get(cleaned_entity,0) + 1
+            entity_dict[cleaned_entity.lower()] = entity_dict.get(cleaned_entity.lower(), 0) + 1
 
         text_tokens = re.findall(TOKENIZER_PATTERN, text)
         indices_counter = 0
@@ -443,6 +443,6 @@ class Parse:
             if term.lower() in self.corona_words:
                 real_ones.append("covid")
             else:
-                real_ones.append(self.checker.correction(term))
+                real_ones.append(self.stemmer.stem_term(self.checker.correction(term)))
         query = ' '.join(real_ones)
         return query

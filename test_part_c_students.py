@@ -83,7 +83,7 @@ if __name__ == '__main__':
                 logging.error('model.zip file does not exists.')
 
         # test for each search engine module
-        engine_modules = ['search_engine_' + name for name in ['best']]
+        engine_modules = ['search_engine_' + name for name in ['1']]
         #engine_modules = ['search_engine_' + name for name in ['1', '2', '3', '4', '5', 'best']]
         for engine_module in engine_modules:
             try:
@@ -176,6 +176,7 @@ if __name__ == '__main__':
                     logging.debug(f"{engine_module} results produced average precision@10 of {p10}.")
                     logging.debug(f"{engine_module} results produced average precision@50 of {p50}.")
                     logging.debug(f"{engine_module} results produced average recall of {recall}.")
+                    print(results_map)
                     if prec < 0 or prec > 1:
                         logging.error(f"The average precision for {engine_module} is out of range [0,1].")
                     if p5 < 0 or p5 > 1:
