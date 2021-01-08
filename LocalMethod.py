@@ -22,6 +22,7 @@ class LocalMethod:
         new_terms = LocalMethod.filter_new_words(query, new_terms, matrix, term_map)
 
         new_query = query + ' ' + ' '.join(new_terms)
+        print(new_query)
         return new_query
 
     @staticmethod

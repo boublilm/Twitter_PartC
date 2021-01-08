@@ -290,7 +290,7 @@ class Parse:
         text_tokens = re.findall(TOKENIZER_PATTERN, text)
         indices_counter = 0
         for term in text_tokens:
-            if len(term) < 1: continue
+            if len(term) < 1 or (len(term)==1 and not term.isdigit()): continue
             indices_counter += 1
             if term.lower() in self.corona_words:
                 term = "covid"
@@ -413,7 +413,8 @@ class Parse:
         docText = re.sub(REMOVE_URL_PATTERN, "", docText)  # link (urls) removal from fulltext
         docText = self.num_manipulation(docText)
         docText = self.remove_percent_dollar(docText)
-
+        if tweet_id == '1287008245098459137':
+            x=1
         tokenized_dict, indices_counter, entity_dict = self.parse_sentence(docText)
         urlTermList = self.url_parser(url)
         for term in urlTermList:
@@ -443,6 +444,9 @@ class Parse:
             if term.lower() in self.corona_words:
                 real_ones.append("covid")
             else:
-                real_ones.append(self.stemmer.stem_term(self.checker.correction(term)))
+                if self.toStem:
+                    real_ones.append(self.stemmer.stem_term(self.checker.correction(term)))
+                else:
+                    real_ones.append(self.checker.correction(term))
         query = ' '.join(real_ones)
         return query
