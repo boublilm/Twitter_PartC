@@ -422,7 +422,7 @@ class Parse:
 
         doc_length = self.nonstopwords  # after text operations.
 
-        document = Document(tweet_id,term_doc_dictionary=tokenized_dict, doc_length=doc_length, max_tf=self.max_tf, entities_dict=entity_dict)
+        document = Document(int(tweet_id),term_doc_dictionary=tokenized_dict, doc_length=doc_length, max_tf=self.max_tf, entities_dict=entity_dict)
         return document
 
     def parse_query(self,query):  # return {term: ([indices,tf])}

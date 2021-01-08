@@ -5,10 +5,10 @@ class Indexer:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def __init__(self, config):
-        self.inverted_idx = {}  # { term: [[tweet_id], df, cf, idf]}
+        self.inverted_idx = {}  # { term: [set(tweet_id), df, cf, idf]}
         self.postingDict = {}  # {(term, tweet_id): [normalized tf, tf-idf]}
-        self.config = config
         self.document_dict = {}  # {tweet_id : [set(words), |d|]}
+        self.config = config
         self.upper_terms = set()
         self.suspected_entities = {}  # ENTITY: (TWEETID, tf, max tf)
 
@@ -34,7 +34,8 @@ class Indexer:
                 prev_tweet_id = self.suspected_entities[entity][0]
                 prev_tf = self.suspected_entities[entity][1]
                 prev_max_tf = self.suspected_entities[entity][2]
-                self.inverted_idx[entity] = [[prev_tweet_id], 1, prev_tf, None]
+                self.inverted_idx[entity] = [set(), 1, prev_tf, None]
+                self.inverted_idx[entity][0].add(prev_tweet_id)
                 self.postingDict.update({(entity, prev_tweet_id): [prev_tf / prev_max_tf, 0]})
                 # Add to document term list to process, and remove from suspected
                 terms_in_document[entity] = document.entities[entity]
@@ -53,22 +54,24 @@ class Indexer:
                     # We want to make sure lower term and upper term are in the same bucket
                     if term.upper() in self.inverted_idx:  # we have lower and upper is inside - this is a new term
                         self.upper_terms.add(term.upper()) # add to fix list
-                        self.inverted_idx[term] = [[tweet_id], 1, tf, None]
+                        self.inverted_idx[term] = [set(), 1, tf, None]
+                        self.inverted_idx[term][0].add(tweet_id)
                     elif term.lower() in self.inverted_idx:  # we have upper and lower is inside - add to existing lower
                         term = term.lower()
                         term_rec = self.inverted_idx[term]
-                        term_rec[0].append(tweet_id)
+                        term_rec[0].add(tweet_id)
                         term_rec[1] += 1  # df
                         term_rec[2] += tf  # cf
                         self.inverted_idx[term] = term_rec
                     else:  # new word - new term
-                        self.inverted_idx[term] = [[tweet_id], 1, tf, None]
+                        self.inverted_idx[term] = [set(), 1, tf, None]
+                        self.inverted_idx[term][0].add(tweet_id)
 
                 else:  # existing term - update term parameters
                     if term.lower() in self.inverted_idx:
                         term = term.lower()
                     term_rec = self.inverted_idx[term]
-                    term_rec[0].append(tweet_id)
+                    term_rec[0].add(tweet_id)
                     term_rec[1] += 1  # df
                     term_rec[2] += tf  # cf
                     self.inverted_idx[term] = term_rec
@@ -86,8 +89,8 @@ class Indexer:
         to_delete = set() # set((term,tweetID))
         for term in delete_list:
             if term.upper() not in self.upper_terms:
-                tweet_id = self.inverted_idx[term][0][0]
-                to_delete.add((term, tweet_id))
+                for tweet_id in self.inverted_idx[term][0]:
+                    to_delete.add((term, tweet_id))
 
         N = len(self.document_dict)
 
@@ -102,7 +105,8 @@ class Indexer:
             lower_term = upper_term.lower()
             upper_record = self.inverted_idx[upper_term]
             lower_record = self.inverted_idx[lower_term]
-            for i in range(3):
+            lower_record[0].union(upper_record[0])
+            for i in range(1, 3):
                 lower_record[i] += upper_record[i]
             self.inverted_idx[lower_term] = lower_record
             # Updating posting files to lower term
