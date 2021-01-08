@@ -7,12 +7,10 @@ import search_engine_3
 if __name__ == '__main__':
     se = search_engine_3.SearchEngine()
     se.build_index_from_parquet(r"C:\Users\maorb\OneDrive\Desktop\Search_Engine_Part_C\Search_Engine-master\data\benchmark_data_train.snappy.parquet")
-    df = pd.read_csv(r"C:\Users\maorb\OneDrive\Desktop\Search_Engine_Part_C\Search_Engine-master\data\queries_train.tsv", sep='\t')
-    times = []
-    for i in df['information_need']:
-        start_time = time.time()
-        x = se.search(i)
-        times.append(time.time()-start_time)
-    print(f"Average is: {np.mean(times)}")
-    print(f"Max is: {max(times)}")
+    querys = ['Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.','The seasonal flu kills more people every year in the U.S. than COVID-19 has to date.','The coronavirus pandemic is a cover for a plan to implant trackable microchips and that the Microsoft co-founder Bill Gates is behind it','Herd immunity has been reached.','Children are “almost immune from this disease.”']
+    for i in querys:
+        print(i)
+        #x = se.search(i)
+        #print(x[1][:5])
+
 

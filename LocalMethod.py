@@ -9,14 +9,16 @@ class LocalMethod:
         matrix, term_map = LocalMethod.create_matrix(doc_set)
         inverse_map = {inx: term for term, inx in term_map.items()}
         new_terms = []
-        for term in query.split(' '):
+        all_terms = query.split(' ')
+        for term in all_terms:
             if term not in term_map:
                 continue
             t_index = term_map[term]
             terms_vector = matrix[t_index]
             new_term_index = np.argsort(terms_vector)[-2]
             best_term = inverse_map[new_term_index]
-            new_terms.append(best_term)
+            if best_term not in all_terms:
+                new_terms.append(best_term)
         new_terms = LocalMethod.filter_new_words(query, new_terms, matrix, term_map)
 
         new_query = query + ' ' + ' '.join(new_terms)
