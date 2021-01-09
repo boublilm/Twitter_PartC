@@ -10,6 +10,7 @@ class LocalMethod:
         inverse_map = {inx: term for term, inx in term_map.items()}
         new_terms = []
         all_terms = query.split(' ')
+        # find best term for each term in query
         for term in all_terms:
             if term not in term_map:
                 continue

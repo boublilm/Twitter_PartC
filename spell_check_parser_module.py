@@ -413,8 +413,7 @@ class Parse:
         docText = re.sub(REMOVE_URL_PATTERN, "", docText)  # link (urls) removal from fulltext
         docText = self.num_manipulation(docText)
         docText = self.remove_percent_dollar(docText)
-        if tweet_id == '1287008245098459137':
-            x=1
+
         tokenized_dict, indices_counter, entity_dict = self.parse_sentence(docText)
         urlTermList = self.url_parser(url)
         for term in urlTermList:
