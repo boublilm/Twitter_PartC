@@ -442,8 +442,13 @@ class Parse:
             if term.lower() in self.corona_words:
                 real_ones.append("covid")
             else:
+                lower = term.islower()
                 if self.toStem:
-                    real_ones.append(self.stemmer.stem_term(term))
+                    new_term = self.stemmer.stem_term(term)
+                    if lower:
+                        real_ones.append(new_term)
+                    else:
+                        real_ones.append(new_term.upper())
                 else:
                     real_ones.append(term)
         query = ' '.join(real_ones)
