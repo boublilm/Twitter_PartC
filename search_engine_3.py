@@ -6,6 +6,7 @@ from indexer import Indexer
 from searcher import Searcher
 from gensim.models import KeyedVectors
 import utils
+import os
 
 #Word2Vec
 # DO NOT CHANGE THE CLASS NAME
@@ -62,7 +63,8 @@ class SearchEngine:
         This is where you would load models like word2vec, LSI, LDA, etc. and
         assign to self._model, which is passed on to the searcher at query time.
         """
-        self._model = KeyedVectors.load_word2vec_format(model_dir, binary=True, unicode_errors='ignore')
+        path = os.path.join(model_dir, 'model')
+        self._model = KeyedVectors.load_word2vec_format(path, binary=True, unicode_errors='ignore')
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
