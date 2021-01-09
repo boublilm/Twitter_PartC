@@ -359,6 +359,12 @@ class Parse:
         return tag[1:]
 
     def dictAppender(self, d, counter, term):
+        # remove hashtags
+        if term[0] == "#":
+            term = term[1:]
+            if len(term) < 1:
+                return
+
         # Handling Stemming
         if self.toStem:
             stemmed_word = self.stemmer.stem_term(term)
@@ -454,3 +460,17 @@ class Parse:
                     real_ones.append(new_term.upper())
         query = ' '.join(real_ones)
         return query
+
+    def before_wordnet(self, query):
+        text_tokens = re.findall(TOKENIZER_PATTERN, query)
+        tokens = list(filter(lambda x: x.lower() not in self.stop_words, text_tokens))
+        real_ones = list()
+        for term in tokens:
+            if term.lower() in self.corona_words:
+                real_ones.append("covid")
+            else:
+                real_ones.append(term)
+        query = ' '.join(real_ones)
+        return query
+
+

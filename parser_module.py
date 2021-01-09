@@ -358,6 +358,12 @@ class Parse:
         return tag[1:]
 
     def dictAppender(self, d, counter, term):
+        # Remove HashTags
+        if term[0] == "#":
+            term = term[1:]
+            if len(term) < 1:
+                return
+
         # Handling Stemming
         if self.toStem:
             stemmed_word = self.stemmer.stem_term(term)
