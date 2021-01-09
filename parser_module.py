@@ -297,7 +297,7 @@ class Parse:
                 for mini_term in hashtag_list:
                     self.dictAppender(term_dict, indices_counter, mini_term)
             elif term[0] == "@":  # handle tags
-                continue  # TODO: remove @
+                continue
                 no_tag = self.tags_parser(term)
                 self.dictAppender(term_dict, indices_counter, no_tag)
             elif term in contractions:  # remove things like he'll

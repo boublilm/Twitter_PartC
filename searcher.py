@@ -117,14 +117,12 @@ class Searcher:
         NUM_OF_DOCS = 200
         # Get all relevant docs
         query = WordNet.expand_query(self._parser.remove_stopwords(query))
-        print("wordnet query: " + query)
         parsed_query, parsed_entities = self._parser.parse_query(query)
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
         ranked_doc_ids = self._ranker.rank_relevant_docs_1(relevant_docs)
         # Expand query
         doc_dict = self._indexer.get_doc_list(ranked_doc_ids[:NUM_OF_DOCS])
         new_query = LocalMethod.expand_query(query, doc_dict)
-        print("query after local: " + new_query)
         parsed_query, parsed_entities = self._parser.parse_query(new_query)
         # Run new query
         relevant_docs = self._relevant_docs_from_posting(parsed_query, parsed_entities)
