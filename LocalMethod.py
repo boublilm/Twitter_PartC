@@ -9,33 +9,39 @@ class LocalMethod:
         matrix, term_map = LocalMethod.create_matrix(doc_set)
         inverse_map = {inx: term for term, inx in term_map.items()}
         new_terms = []
-        all_terms = query.split(' ')
+        all_terms_lower = query.lower().split(' ')
         # find best term for each term in query
-        for term in all_terms:
-            if term not in term_map:
-                continue
+        for term in all_terms_lower:
+            if term not in term_map:  # is upper or not exist
+                if term.upper() in term_map:
+                    term = term.upper()
+                else:
+                    continue
             t_index = term_map[term]
             terms_vector = matrix[t_index]
             new_term_index = np.argsort(terms_vector)[-2]
             best_term = inverse_map[new_term_index]
-            if best_term not in all_terms:
+            if best_term.lower() not in all_terms_lower:  # remove duplications
                 new_terms.append(best_term)
-        new_terms = LocalMethod.filter_new_words(query, new_terms, matrix, term_map)
+        new_terms = LocalMethod.filter_new_words(all_terms_lower, new_terms, matrix, term_map)
 
         new_query = query + ' ' + ' '.join(new_terms)
         # print(new_query)
         return new_query
 
     @staticmethod
-    def filter_new_words(query, words_to_add, matrix, term_map):
+    def filter_new_words(all_terms_lower, words_to_add, matrix, term_map):
         to_add = set()
         for word in words_to_add:
             w_index = term_map[word]
             terms_vector = matrix[w_index]
             counter = 0
-            for term in query.split(' '):
+            for term in all_terms_lower:
                 if term not in term_map:
-                    continue
+                    if term.upper() in term_map:
+                        term = term.upper()
+                    else:
+                        continue
                 t_index = term_map[term]
                 similarity = terms_vector[t_index]
                 if similarity >= MIN_SIMILARITY:
