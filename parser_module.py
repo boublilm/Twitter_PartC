@@ -297,9 +297,9 @@ class Parse:
                 for mini_term in hashtag_list:
                     self.dictAppender(term_dict, indices_counter, mini_term)
             elif term[0] == "@":  # handle tags
-                continue
-                #no_tag = self.tags_parser(term)
-                #self.dictAppender(term_dict, indices_counter, no_tag)
+                continue  # TODO: remove @
+                no_tag = self.tags_parser(term)
+                self.dictAppender(term_dict, indices_counter, no_tag)
             elif term in contractions:  # remove things like he'll
                 new_terms = contractions[term].split(" ")
                 for mini_term in new_terms:
@@ -352,7 +352,7 @@ class Parse:
         if len(splitted_hashtag) < 2:
             return splitted_hashtag
         else:
-            return splitted_hashtag[1:] #+ [hashtag.lower()]
+            return splitted_hashtag[1:] #+ [hashtag.lower()] #removed #stayAtHome from the terms list
 
     def tags_parser(self, tag):
         return tag[1:]

@@ -8,7 +8,6 @@ class Word2Vec:
     def expand_query(self,query):
         query_list = [term for term in query.split(" ")]
         q_added = []
-        # Get the first synset with the same name as term
         for term in query_list:
             try:
                 similar = self.wv.similar_by_word(term)

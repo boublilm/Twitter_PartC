@@ -7,7 +7,7 @@ class Indexer:
     def __init__(self, config):
         self.inverted_idx = {}  # { term: [set(tweet_id), df, cf, idf]}
         self.postingDict = {}  # {(term, tweet_id): [normalized tf, tf-idf]}
-        self.document_dict = {}  # {tweet_id : [set(words), |d|]}
+        self.document_dict = {}  # {tweet_id : [{term: tf}, |d|]}
         self.config = config
         self.upper_terms = set()
         self.suspected_entities = {}  # ENTITY: (TWEETID, tf, max tf)

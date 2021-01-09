@@ -260,7 +260,6 @@ contractions = {
 
 
 class Parse:
-
     def __init__(self,stemming=True):
         self.stop_words = stopwords.words('english')
         self.stop_words += ["rt", "http", "https", "www","twitter.com"]
@@ -352,7 +351,7 @@ class Parse:
         if len(splitted_hashtag) < 2:
             return splitted_hashtag
         else:
-            return splitted_hashtag[1:] #+ [hashtag.lower()]
+            return splitted_hashtag[1:] + [hashtag.lower()]
 
     def tags_parser(self, tag):
         return tag[1:]
