@@ -62,7 +62,7 @@ class SearchEngine:
         This is where you would load models like word2vec, LSI, LDA, etc. and
         assign to self._model, which is passed on to the searcher at query time.
         """
-        self._model = KeyedVectors.load_word2vec_format(r'model\model', binary=True, unicode_errors='ignore')
+        self._model = KeyedVectors.load_word2vec_format(model_dir, binary=True, unicode_errors='ignore')
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -78,5 +78,5 @@ class SearchEngine:
             and the last is the least relevant result.
         """
         self.searcher = Searcher(self._parser, self._indexer, model=self._model)
-        to_return = self.searcher.search_w2v(query, 200)
+        to_return = self.searcher.search_w2v(query,200)
         return to_return

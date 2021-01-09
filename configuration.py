@@ -8,7 +8,7 @@ class ConfigClass:
         # the updated model (with a valid model_url), then turn back to False 
         # in subsequent submissions to avoid the slow downloading of the large 
         # model file with every submission.
-        self._download_model = False # TODO: TRUE
+        self._download_model = True
 
         self.corpusPath = ''
         self.savedFileMainFolder = ''
