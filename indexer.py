@@ -98,6 +98,7 @@ class Indexer:
         for term,tweet_id in to_delete:
             self.inverted_idx.pop(term)
             self.postingDict.pop((term,tweet_id))
+            self.document_dict[tweet_id][0].pop(term)
 
         # Fix upper terms in fix list
         for upper_term in self.upper_terms:
