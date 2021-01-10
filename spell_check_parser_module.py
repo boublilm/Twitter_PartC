@@ -3,7 +3,7 @@ from nltk.corpus import stopwords
 from document import Document
 from stemmer import Stemmer
 from spellchecker import SpellChecker
-
+from Spell_Checker import SpellCheck
 BILLION_PATTERN = r'(?<=\d|.) *Billion|(?<=\d|.) *billion'
 MILLION_PATTERN = r'(?<=\d|.) *Million|(?<=\d|.) *million'
 THOUSAND_PATTERN = r'(?<=\d|.) *Thousand|(?<=\d|.) *thousand'
@@ -270,7 +270,8 @@ class Parse:
         self.max_tf = 0
         self.toStem = stemming
         self.entities = {}
-        self.checker = SpellChecker(distance=1)
+        self.checker = SpellCheck()
+        #self.checker = SpellChecker(distance=1)
         if self.toStem:
             self.stemmer = Stemmer()
 

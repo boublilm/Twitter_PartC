@@ -82,8 +82,8 @@ if __name__ == '__main__':
             config.model_dir = model_dir
 
     # test for each search engine module
-    engine_modules = ['search_engine_' + name for name in ['3']]
-    #engine_modules = ['search_engine_' + name for name in ['1', '2','3','4','5','best']]
+    #engine_modules = ['search_engine_' + name for name in ['3']]
+    engine_modules = ['search_engine_' + name for name in ['1', '2','3','4','5','best']]
     for engine_module in engine_modules:
 
         # does the module file exist?
@@ -156,6 +156,7 @@ if __name__ == '__main__':
             # test that MAP > 0
             results_map = metrics.map(q_results_labeled)
             logging.debug(f"{engine_module} results have MAP value of {results_map}.")
+            print(engine_module,results_map)
             if results_map <= 0 or results_map > 1:
                 logging.error(f'{engine_module} results MAP value is out of range (0,1).')
 
